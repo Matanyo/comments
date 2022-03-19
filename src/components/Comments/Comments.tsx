@@ -15,12 +15,7 @@ import {
 } from "@mui/material";
 import { useIntersectionObserverRef } from "rooks";
 import FavoriteIcon from "@mui/icons-material/Favorite";
-
-const CardStyled = styled(Card)`
-  max-width: 500px;
-  margin: auto;
-  width: 100%;
-`;
+import { CardStyled } from "../Shared/Card.style";
 
 export const Comments = () => {
   const { data, isFetching, fetchNextPage, hasNextPage, isFetchingNextPage } =

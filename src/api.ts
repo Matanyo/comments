@@ -7,7 +7,7 @@ const buildFullURL = (page: number = 1) => {
   return `${baseURL}/${commentsKey}?_limit=${limit}&_page=${page}`;
 };
 
-interface IComment {
+export interface IComment {
   postId: number;
   id: number;
   name: string;
