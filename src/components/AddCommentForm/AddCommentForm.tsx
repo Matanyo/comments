@@ -48,16 +48,21 @@ export const AddCommentForm = (props: Props) => {
       ...formValues,
       id: crypto.getRandomValues(new Uint32Array(1))[0],
     };
-    console.log(requestValues);
+    // test url (https://jsonplaceholder.typicode.com/posts)
 
-    fetch("https://jsonplaceholder.typicode.com/posts", {
+    fetch("test.steps.me/test/testAssignComment", {
       method: "POST",
       body: JSON.stringify(requestValues),
       headers: {
         "Content-type": "application/json; charset=UTF-8",
       },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error("Network response was not ok.");
+      })
       .then((newComment) => {
         const data: any = queryClient.getQueryData(commentsKey);
         const { pageParams, pages } = data;
@@ -67,6 +72,9 @@ export const AddCommentForm = (props: Props) => {
         newPages[0] = newFirstPage;
 
         queryClient.setQueryData(commentsKey, { pages: newPages, pageParams });
+      })
+      .catch((e) => {
+        console.log(e);
       });
   };
   return (

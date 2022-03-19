@@ -4,7 +4,6 @@ import { useInfiniteQuery } from "react-query";
 import { commentsKey, fetchCommentsByPage } from "../../api";
 import {
   Avatar,
-  Card,
   CardActions,
   CardContent,
   CardHeader,
