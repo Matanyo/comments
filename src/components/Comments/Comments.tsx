@@ -68,7 +68,7 @@ export const Comments = () => {
                 >
                   {page.map((comment) => {
                     return (
-                      <Grid item key={comment.id}>
+                      <Grid item key={comment.id} width={"100%"}>
                         <CardStyled>
                           <CardHeader
                             avatar={

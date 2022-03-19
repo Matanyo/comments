@@ -1,6 +1,5 @@
 import { styled } from "@mui/system";
 import Header from "./components/Header/Header";
-import { useEffect, useState } from "react";
 import { ScrollTop } from "./components/ScrollToUp/ScrollToUp";
 import { Comments } from "./components/Comments/Comments";
 import { AddCommentForm } from "./components/AddCommentForm/AddCommentForm";

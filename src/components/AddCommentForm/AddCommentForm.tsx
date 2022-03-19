@@ -9,7 +9,8 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { useState } from "react";
-import { IComment } from "../../api";
+import { useQueryClient } from "react-query";
+import { commentsKey, IComment } from "../../api";
 import { CardStyled } from "../Shared/Card.style";
 
 const defaultValues: IComment = {
@@ -30,8 +31,9 @@ interface Props {}
 
 export const AddCommentForm = (props: Props) => {
   const [formValues, setFormValues] = useState(defaultValues);
+  const queryClient = useQueryClient();
 
-  const handleInputChange = (event: any) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormValues({
       ...formValues,
@@ -39,15 +41,39 @@ export const AddCommentForm = (props: Props) => {
     });
   };
 
-  const handleSubmit = (event: any) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(formValues);
+
+    const requestValues = {
+      ...formValues,
+      id: crypto.getRandomValues(new Uint32Array(1))[0],
+    };
+    console.log(requestValues);
+
+    fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      body: JSON.stringify(requestValues),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then((newComment) => {
+        const data: any = queryClient.getQueryData(commentsKey);
+        const { pageParams, pages } = data;
+        const [firstPage] = pages;
+        const newFirstPage = [newComment, ...firstPage];
+        const newPages = [...pages];
+        newPages[0] = newFirstPage;
+
+        queryClient.setQueryData(commentsKey, { pages: newPages, pageParams });
+      });
   };
   return (
     <GridStyled container alignItems="center" direction="column" rowSpacing={2}>
       <Grid item className="full-width">
         <CardStyled>
-          <CardHeader title="New comment"></CardHeader>
+          <CardHeader title="Add Your Comment"></CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit}>
               <Grid
