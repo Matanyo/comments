@@ -6,16 +6,20 @@ import {
   CardHeader,
   Grid,
   IconButton,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { styled } from "@mui/system";
 import { useInfiniteQuery } from "react-query";
 import { fetchCommentsByPage, commentsKey } from "./api";
+import { useIntersectionObserverRef } from "rooks";
 import "./App.css";
 
 const CardStyled = styled(Card)`
   max-width: 500px;
+  min-width: 400px;
+  width: 500px;
 `;
 
 function App() {
@@ -32,24 +36,31 @@ function App() {
         },
       }
     );
+  const callback = (entries: { isIntersecting: any }[]) => {
+    if (entries && entries[0]) {
+      if (entries[0].isIntersecting) {
+        fetchNextPage();
+      }
+    }
+  };
+  const [myRef] = useIntersectionObserverRef(callback);
 
   return (
     <div className="App">
       {isFetching && <p>Loading...</p>}
-      {hasNextPage && (
-        <button onClick={() => fetchNextPage()}>load more</button>
-      )}
-
-      {JSON.stringify(hasNextPage)}
       {data && (
-        <div>
+        <Grid
+          rowSpacing={2}
+          container
+          direction="column"
+          justifyContent="flex-start"
+          alignItems="center"
+        >
           {data.pages.map((page, index) => {
             return (
               <Grid
-                spacing={2}
-                columnSpacing={2}
-                rowSpacing={2}
                 key={index}
+                rowSpacing={2}
                 container
                 direction="column"
                 justifyContent="flex-start"
@@ -57,7 +68,7 @@ function App() {
               >
                 {page.map((comment) => {
                   return (
-                    <Grid item>
+                    <Grid item key={comment.id}>
                       <CardStyled>
                         <CardHeader
                           avatar={
@@ -85,7 +96,52 @@ function App() {
               </Grid>
             );
           })}
-        </div>
+          {hasNextPage && (
+            <Grid item ref={myRef}>
+              <CardStyled>
+                <CardHeader
+                  avatar={
+                    <Skeleton
+                      animation="wave"
+                      variant="circular"
+                      width={40}
+                      height={40}
+                    />
+                  }
+                  title={
+                    <Skeleton
+                      animation="wave"
+                      height={10}
+                      width="80%"
+                      style={{ marginBottom: 6 }}
+                    />
+                  }
+                  subheader={
+                    <Skeleton animation="wave" height={10} width="60%" />
+                  }
+                />
+
+                <CardContent>
+                  <>
+                    <Skeleton
+                      animation="wave"
+                      height={10}
+                      style={{ marginBottom: 6 }}
+                      width="90%"
+                    />
+                    <Skeleton
+                      animation="wave"
+                      height={10}
+                      width="80%"
+                      style={{ marginBottom: 6 }}
+                    />
+                    <Skeleton animation="wave" height={10} width="90%" />
+                  </>
+                </CardContent>
+              </CardStyled>
+            </Grid>
+          )}
+        </Grid>
       )}
     </div>
   );
